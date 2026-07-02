@@ -98,7 +98,10 @@ open gaps were closed:
   in).
 - webp is served directly with no `<img>` fallback — fine for current browsers
   (~97% support); revisit only if you must support very old clients.
-- Contact form is still a static demo (not wired to a backend).
+- Contact form is wired to **Netlify Forms** (`data-netlify="true"`, hidden
+  `form-name`, `name` attributes on every field, a `bot-field` honeypot, and a
+  `/thank-you.html` success redirect). Submissions appear in the Netlify
+  dashboard under Forms once deployed; no backend code needed.
 
 ## Claude Code Session Update (this session)
 
