@@ -226,56 +226,45 @@ h5 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   font-size: 1.1rem;
 }
 
-/* Static logo hero: brand logo baked into the background image (upper-center);
-   the headline/button sit in the lower band so nothing overlaps the logo. */
+/* Static logo hero, split into two stacked zones so the marketing text is
+   never overlaid on the logo image — the logo sits in its own banner, and the
+   headline/button sit on a solid navy block below it. Guarantees separation at
+   every screen size and keeps the text fully legible. */
 .logo-hero {
-  position: relative;
-  overflow: hidden;
-  color: #fff;
-  min-height: 78vh;
-  display: flex;
-  align-items: flex-end;      /* content pinned to the lower band */
-  justify-content: center;
-  text-align: center;
   background: var(--navy-dark);
 }
 
-.logo-hero-bg {
-  position: absolute;
-  inset: 0;
+.logo-hero-figure {
+  width: 100%;
+  height: 46vh;
+  min-height: 300px;
+  max-height: 560px;
+  overflow: hidden;
+  background: var(--navy-dark);
+}
+
+.logo-hero-figure img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 38%; /* keep the logo comfortably in view */
-  z-index: 0;
+  object-position: center 42%;   /* keeps the wordmark centered in the crop */
+  display: block;
 }
 
-/* Transparent over the logo (upper/middle), darkening toward the bottom so the
-   lower-band text stays legible without covering the logo. */
-.logo-hero-scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(180deg,
-    rgba(10, 24, 48, 0) 0%,
-    rgba(10, 24, 48, 0) 55%,
-    rgba(10, 24, 48, 0.78) 88%,
-    rgba(10, 24, 48, 0.92) 100%);
+.logo-hero-text {
+  background: var(--navy);
+  color: #fff;
+  text-align: center;
+  padding: 48px 0 56px;
 }
 
-.logo-hero-content {
-  position: relative;
-  z-index: 2;
-  padding: 0 24px 64px;
-}
-
-.logo-hero-content h1 {
+.logo-hero-text h1 {
   color: #fff;
   font-size: 2.5rem;
   margin-bottom: 0.4em;
 }
 
-.logo-hero-content p {
+.logo-hero-text p {
   max-width: 680px;
   margin: 0 auto 28px;
   color: rgba(255, 255, 255, 0.9);
@@ -706,24 +695,25 @@ h5 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.04em; colo
     grid-template-columns: 1fr;
   }
 
-  .logo-hero-content h1 {
+  .logo-hero-text h1 {
     font-size: 1.6rem;
   }
 
-  .logo-hero-content p {
+  .logo-hero-text p {
     font-size: 1rem;
   }
 
-  .logo-hero {
-    min-height: 70vh;
+  /* On narrow screens, match the banner to the image's own 16:9 ratio so the
+     whole logo (including the wide wordmark) shows with no cropping. */
+  .logo-hero-figure {
+    height: auto;
+    aspect-ratio: 16 / 9;
+    max-height: none;
+    min-height: 0;
   }
 
-  /* On narrow screens `cover` would crop the wide logo's sides, so show the
-     whole logo with `contain` and let the navy background fill the letterbox.
-     Anchor it to the upper area so the lower band stays clear for the text. */
-  .logo-hero-bg {
-    object-fit: contain;
-    object-position: center 22%;
+  .logo-hero-figure img {
+    object-position: center;
   }
 
   h1 { font-size: 1.75rem; }
