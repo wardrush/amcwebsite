@@ -2,9 +2,21 @@ import os
 
 SITE = os.path.dirname(os.path.abspath(__file__))
 
-LOGO = "https://amchealthcareinc.com/wp-content/uploads/2024/02/long-logo.png"
-FOOTER_LOGO = "https://amchealthcareinc.com/wp-content/uploads/2024/09/AMC_Logo_Horizontal_Secondary_Dark-1024x91.png"
-BANNER = "https://amchealthcareinc.com/wp-content/uploads/2024/09/AMC_Banner_3x6_page-0001-1024x512.jpg"
+# Assets are self-hosted locally. Every raster image was downloaded from the
+# live site and converted to .webp (see tools/fetch_and_optimize.py); videos
+# were re-encoded for the web. asset() maps a live wp-content/uploads URL to
+# its local .webp equivalent so the page markup stays readable.
+UPLOADS = "https://amchealthcareinc.com/wp-content/uploads/"
+
+def asset(url):
+    """Live uploads URL -> local optimized webp path."""
+    rel = url[len(UPLOADS):] if url.startswith(UPLOADS) else url
+    base, _ext = os.path.splitext(rel)
+    return "assets/img/" + base + ".webp"
+
+LOGO = asset("https://amchealthcareinc.com/wp-content/uploads/2024/02/long-logo.png")
+FOOTER_LOGO = asset("https://amchealthcareinc.com/wp-content/uploads/2024/09/AMC_Logo_Horizontal_Secondary_Dark-1024x91.png")
+BANNER = asset("https://amchealthcareinc.com/wp-content/uploads/2024/09/AMC_Banner_3x6_page-0001-1024x512.jpg")
 
 NAV_ITEMS = [
     ("About Us", "about-us.html", [("Leadership", "leadership.html"), ("Partners", "partners.html")]),
@@ -128,7 +140,7 @@ process_images = [
     "https://amchealthcareinc.com/wp-content/uploads/2024/12/AMC-Hospital-Shot-Inner-V2.png",
     "https://amchealthcareinc.com/wp-content/uploads/2024/09/unit-being-set-on-pier-and-beam.png",
 ]
-process_gallery = "\n          ".join(f'<img src="{u}" alt="AMC Healthcare construction process">' for u in process_images)
+process_gallery = "\n          ".join(f'<img src="{asset(u)}" alt="AMC Healthcare construction process" loading="lazy">' for u in process_images)
 
 process_body = f"""    <div class="page-content">
       <div class="container">
@@ -224,7 +236,7 @@ leaders = [
 ]
 
 leaders_html = "\n          ".join(f"""<div class="person-card">
-            <img src="{img}" alt="{name}">
+            <img src="{asset(img)}" alt="{name}" loading="lazy">
             <h3>{name}</h3>
           </div>""" for name, img in leaders)
 
@@ -264,8 +276,18 @@ partners_body = f"""    <div class="page-content">
 """
 
 # ---------- HOME ----------
-home_body = f"""    <section class="home-hero">
-      <div class="container">
+# Video hero uses the self-hosted, re-encoded logo-animation loop (autoplay,
+# muted, playsinline so it loops silently as a background) with a poster frame
+# for the pre-load paint. The larger promo films are click-to-play with posters
+# and preload="none" so they never touch the initial page load.
+home_body = f"""    <section class="video-hero">
+      <video class="video-hero-bg" autoplay muted loop playsinline
+             poster="assets/video/logo-animation-poster.webp">
+        <source src="assets/video/logo-animation.webm" type="video/webm">
+        <source src="assets/video/logo-animation.mp4" type="video/mp4">
+      </video>
+      <div class="video-hero-overlay"></div>
+      <div class="container video-hero-content">
         <h1>Modular Healthcare Solutions</h1>
         <p>Controlled Environment Construction cuts delivery time by 50&ndash;75% and costs by up to 50%, bringing US-quality healthcare facilities online faster &ndash; in underserved regions of the US and around the globe.</p>
         <a class="btn" href="contact-us.html">Contact Us</a>
@@ -281,13 +303,36 @@ home_body = f"""    <section class="home-hero">
       <div class="container">
         <h2>Healthcare Can&rsquo;t Wait</h2>
         <p>AMC Healthcare is restoring access to care with permanent modular hospitals built faster and smarter. The first modular inpatient units in the USA were built by AMC executives, transported 1,000 miles and reassembled &ndash; the first surgery took place 28 days after the modules were set.</p>
-        <p class="contact-note">This is a lightweight stand-in for the real homepage (which is video-heavy). See <a href="about-us.html">About Us</a> for the fully cloned page.</p>
+        <div class="feature-video">
+          <video controls preload="none" poster="assets/video/hospital-film-poster.webp">
+            <source src="assets/video/hospital-film.mp4" type="video/mp4">
+          </video>
+        </div>
       </div>
     </div>
+    <section class="film-strip">
+      <div class="container">
+        <h2>Our Story</h2>
+        <div class="film-grid">
+          <figure class="film">
+            <video controls preload="none" poster="assets/video/amc-60-poster.webp">
+              <source src="assets/video/amc-60.mp4" type="video/mp4">
+            </video>
+            <figcaption>AMC in 60 Seconds</figcaption>
+          </figure>
+          <figure class="film">
+            <video controls preload="none" poster="assets/video/america-first-poster.webp">
+              <source src="assets/video/america-first.mp4" type="video/mp4">
+            </video>
+            <figcaption>America First</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
 """
 
 pages = [
-    ("index.html", "Home", "AMC Healthcare — modular healthcare construction (approximate clone, homepage placeholder).", None, home_body),
+    ("index.html", "Home", "AMC Healthcare — modular healthcare construction delivered faster and at lower cost through Controlled Environment Construction.", None, home_body),
     ("about-us.html", "About Us", "About AMC Healthcare — approximate clone of the live About Us page.", "about-us.html", about_body),
     ("process.html", "Process", "AMC Healthcare's modular construction process — approximate clone.", "process.html", process_body),
     ("press.html", "Press", "AMC Healthcare press coverage — approximate clone.", "press.html", press_body),

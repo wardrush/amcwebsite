@@ -3,17 +3,21 @@
    live site (see claude.md "Key Decisions"). */
 
 :root {
-  --navy: #0b2545;
-  --navy-dark: #081b34;
-  --accent: #1c7c9c;
-  --accent-dark: #155f78;
+  /* Brand palette taken from the live site's Kadence global palette:
+     navy = palette2, copper = palette1, slate = palette4, gold = palette5. */
+  --navy: #102343;
+  --navy-dark: #0a1830;
+  --accent: #be7048;        /* copper — real button/link accent */
+  --accent-dark: #a15c39;
+  --slate: #405f7a;
+  --gold: #d8ae4f;
   --text: #1f2937;
   --text-light: #4b5563;
   --bg: #ffffff;
   --bg-alt: #f5f6f8;
   --border: #e2e5ea;
   --max-width: 1180px;
-  --radius: 6px;
+  --radius: 4px;
   font-size: 16px;
 }
 
@@ -27,7 +31,9 @@ html {
 
 body {
   margin: 0;
-  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+  /* Live site uses Aptos (Microsoft's default), falling back to the system
+     sans stack when Aptos isn't installed. */
+  font-family: Aptos, "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
   color: var(--text);
   background: var(--bg);
   line-height: 1.6;
@@ -218,6 +224,101 @@ h5 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   margin: 0 auto 28px;
   color: rgba(255, 255, 255, 0.85);
   font-size: 1.1rem;
+}
+
+/* Video-background hero */
+.video-hero {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  background: var(--navy-dark);
+}
+
+.video-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.video-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(16, 35, 67, 0.55) 0%, rgba(10, 24, 48, 0.78) 100%);
+}
+
+.video-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 80px 24px;
+}
+
+.video-hero-content h1 {
+  color: #fff;
+  font-size: 3rem;
+  margin-bottom: 0.4em;
+}
+
+.video-hero-content p {
+  max-width: 680px;
+  margin: 0 auto 32px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.15rem;
+}
+
+/* Inline feature video (poster + click to play) */
+.feature-video {
+  margin-top: 32px;
+}
+
+.feature-video video {
+  width: 100%;
+  border-radius: var(--radius);
+  background: #000;
+  display: block;
+}
+
+/* Film strip (click-to-play promo videos) */
+.film-strip {
+  background: var(--bg-alt);
+  border-top: 1px solid var(--border);
+  padding: 48px 0;
+}
+
+.film-strip h2 {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.film-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.film {
+  margin: 0;
+}
+
+.film video {
+  width: 100%;
+  border-radius: var(--radius);
+  background: #000;
+  display: block;
+}
+
+.film figcaption {
+  margin-top: 12px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--navy);
 }
 
 .btn {
@@ -447,10 +548,12 @@ h5 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   border-color: var(--accent);
 }
 
-/* Footer */
+/* Footer — navy with light text, matching the live site (palette2 background,
+   which is also what the light "Secondary_Dark" logo is designed to sit on). */
 .site-footer {
-  background: var(--bg-alt);
-  border-top: 1px solid var(--border);
+  background: var(--navy);
+  color: rgba(255, 255, 255, 0.85);
+  border-top: 3px solid var(--accent);
   margin-top: 48px;
   padding: 48px 0 24px;
 }
@@ -470,13 +573,13 @@ h5 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 }
 
 .footer-address {
-  color: var(--text-light);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.9rem;
   line-height: 1.7;
 }
 
 .footer-address a {
-  color: var(--text-light);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .footer-nav ul {
@@ -489,8 +592,12 @@ h5 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 }
 
 .footer-nav a {
-  color: var(--text);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.9rem;
+}
+
+.footer-nav a:hover {
+  color: #fff;
 }
 
 .footer-bottom {
@@ -499,13 +606,13 @@ h5 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   justify-content: space-between;
   gap: 8px;
   padding-top: 24px;
-  border-top: 1px solid var(--border);
-  color: var(--text-light);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 0.8rem;
 }
 
 .footer-bottom a {
-  color: var(--text-light);
+  color: rgba(255, 255, 255, 0.6);
   text-decoration: underline;
 }
 
@@ -578,6 +685,18 @@ h5 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.04em; colo
 
   .gallery-grid {
     grid-template-columns: 1fr;
+  }
+
+  .film-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .video-hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .video-hero {
+    min-height: 60vh;
   }
 
   h1 { font-size: 1.75rem; }

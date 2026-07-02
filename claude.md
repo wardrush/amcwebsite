@@ -61,12 +61,44 @@ Regenerate all pages after editing `build.py`: `python3 build.py` (writes direct
 4. **First commit.** Nothing from this session is committed yet — review the diff, then `git add -A && git commit` and push when ready.
 5. **Deploy.** Connect the GitHub repo to Netlify for continuous deploy (publish directory = repo root, no build command needed since these are static files), or use `netlify deploy` from the CLI.
 
+## Assets + Optimization Session Update
+
+Once outbound access to `amchealthcareinc.com` was whitelisted, the biggest
+open gaps were closed:
+
+- **Real palette + font.** Pulled the live Kadence global palette from source:
+  navy `#102343` (palette2), copper `#be7048` (palette1, the real
+  button/link accent — the old teal `#1c7c9c` was wrong and is gone), slate
+  `#405f7a`, gold `#d8ae4f`. Body font stack now leads with Aptos (the live
+  site's font). Footer is now navy with white text/logo, matching the live
+  site (its footer background is palette2, which is why the "Secondary_Dark"
+  logo is a light logo).
+- **Self-hosted, optimized assets.** All images downloaded and converted to
+  `.webp` (73 files, ~5 MB total — the raster originals were ~120 MB, so they
+  are intentionally NOT committed). Videos downloaded and re-encoded with
+  ffmpeg: homepage background loop downscaled 4K→1080p (MP4 + WebM, no audio),
+  the promo/feature films compressed to 720p/1080p MP4 with `preload="none"`
+  and webp poster frames (~39 MB total). No more hotlinking except the press
+  article destination links (intentional).
+- **Homepage upgraded** from the gradient placeholder to a real video-hero
+  (autoplay muted loop + navy overlay) plus a featured hospital film and an
+  "Our Story" promo row.
+- **Reproducibility:** `tools/fetch_and_optimize.py` re-downloads and
+  re-optimizes everything from the live site (`--videos` to also re-encode),
+  so the pruned originals are always one command away.
+- **Visual QA** done via headless Chromium against local renders (the live
+  site sits behind Cloudflare, which resets the headless browser's connection,
+  so side-by-side live capture wasn't possible — the match was driven off the
+  extracted source CSS instead).
+
 ## Known Gaps
 
-- No exact color/font match — best-effort palette only (see Key Decisions).
-- Partners page uses text tiles instead of the partners' actual logos.
-- Images are still hotlinked from `amchealthcareinc.com` (see Next Steps #2) — this session's sandbox also blocked outbound requests to that domain, same as the original Cowork session, so this remains undone.
-- No exact visual QA against the live site was done here either (still blocked by the same outbound network restriction) — Next Steps #1 is still open.
+- Partners page uses text tiles instead of the partners' actual logos (their
+  logo images are now downloaded under `assets/img/` if you want to wire them
+  in).
+- webp is served directly with no `<img>` fallback — fine for current browsers
+  (~97% support); revisit only if you must support very old clients.
+- Contact form is still a static demo (not wired to a backend).
 
 ## Claude Code Session Update (this session)
 
