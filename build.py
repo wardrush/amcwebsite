@@ -205,20 +205,34 @@ contact_body = """    <div class="page-content">
             201 E. Kennedy Blvd., Suite 1611<br>Tampa, Florida 33602, US
           </div>
         </div>
-        <form class="contact-form" onsubmit="alert('This is a static clone \\u2014 form submission is not wired up.'); return false;">
+        <form class="contact-form" name="contact" method="POST"
+              action="/thank-you.html" data-netlify="true"
+              data-netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="contact">
+          <p class="hidden-field"><label>Don&rsquo;t fill this out if you&rsquo;re human: <input name="bot-field"></label></p>
           <div class="field-row">
-            <div><label for="fname">First Name</label><input id="fname" type="text" required></div>
-            <div><label for="lname">Last Name</label><input id="lname" type="text" required></div>
+            <div><label for="fname">First Name</label><input id="fname" name="first-name" type="text" required></div>
+            <div><label for="lname">Last Name</label><input id="lname" name="last-name" type="text" required></div>
           </div>
           <label for="email">Email</label>
-          <input id="email" type="email" required style="margin-bottom:16px;">
+          <input id="email" name="email" type="email" required style="margin-bottom:16px;">
           <label for="phone">Phone</label>
-          <input id="phone" type="tel" required style="margin-bottom:16px;">
+          <input id="phone" name="phone" type="tel" required style="margin-bottom:16px;">
           <label for="message">Message</label>
-          <textarea id="message" required></textarea>
+          <textarea id="message" name="message" required></textarea>
           <div style="margin-top:16px;"><button type="submit">Submit</button></div>
-          <p class="form-note">Static demo form &mdash; wire up to Netlify Forms or a form service before going live.</p>
         </form>
+      </div>
+    </div>
+"""
+
+# ---------- THANK YOU (Netlify Forms success redirect) ----------
+thankyou_body = """    <div class="page-content">
+      <div class="container">
+        <span class="eyebrow">Message Received</span>
+        <h1>Thank You</h1>
+        <p>Thanks for reaching out to AMC Healthcare. Your message has been received and someone will be in touch soon.</p>
+        <p style="margin-top:24px;"><a class="btn" href="index.html">Back to Home</a></p>
       </div>
     </div>
 """
@@ -276,18 +290,15 @@ partners_body = f"""    <div class="page-content">
 """
 
 # ---------- HOME ----------
-# Video hero uses the self-hosted, re-encoded logo-animation loop (autoplay,
-# muted, playsinline so it loops silently as a background) with a poster frame
-# for the pre-load paint. The larger promo films are click-to-play with posters
-# and preload="none" so they never touch the initial page load.
-home_body = f"""    <section class="video-hero">
-      <video class="video-hero-bg" autoplay muted loop playsinline
-             poster="assets/video/logo-animation-poster.webp">
-        <source src="assets/video/logo-animation.webm" type="video/webm">
-        <source src="assets/video/logo-animation.mp4" type="video/mp4">
-      </video>
-      <div class="video-hero-overlay"></div>
-      <div class="container video-hero-content">
+# Static logo hero: the final frame of the brand animation (the AMC Healthcare
+# logo on its wave background). The headline/button sit in the lower band so
+# they never overlap the logo. The larger promo films further down are
+# click-to-play with posters and preload="none" so they never touch the
+# initial page load.
+home_body = f"""    <section class="logo-hero">
+      <img class="logo-hero-bg" src="assets/img/hero-logo.webp" alt="AMC Healthcare">
+      <div class="logo-hero-scrim"></div>
+      <div class="container logo-hero-content">
         <h1>Modular Healthcare Solutions</h1>
         <p>Controlled Environment Construction cuts delivery time by 50&ndash;75% and costs by up to 50%, bringing US-quality healthcare facilities online faster &ndash; in underserved regions of the US and around the globe.</p>
         <a class="btn" href="contact-us.html">Contact Us</a>
@@ -337,6 +348,7 @@ pages = [
     ("process.html", "Process", "AMC Healthcare's modular construction process — approximate clone.", "process.html", process_body),
     ("press.html", "Press", "AMC Healthcare press coverage — approximate clone.", "press.html", press_body),
     ("contact-us.html", "Contact Us", "Contact AMC Healthcare — approximate clone.", "contact-us.html", contact_body),
+    ("thank-you.html", "Thank You", "Thank you — your message to AMC Healthcare has been received.", None, thankyou_body),
     ("leadership.html", "Leadership", "AMC Healthcare leadership team — approximate clone.", "about-us.html", leadership_body),
     ("partners.html", "Partners", "AMC Healthcare partners — approximate clone.", "about-us.html", partners_body),
 ]

@@ -53,9 +53,10 @@ IMAGES = [
 # (source URL suffix, output basename, ffmpeg args). The loop gets an extra
 # WebM pass; everything else is MP4 only.
 VIDEOS = [
-    ("2025/12/Logo-Animation-2_medium.mp4", "logo-animation",
-     ["-vf", "scale=1920:-2", "-an", "-c:v", "libx264", "-preset", "medium",
-      "-crf", "28", "-pix_fmt", "yuv420p", "-movflags", "+faststart"], "loop"),
+    # The homepage hero is the *final frame* of the brand animation (a still
+    # logo on its wave background), not the moving loop — so this entry only
+    # produces assets/img/hero-logo.webp, no loop video.
+    ("2025/12/Logo-Animation-2_medium.mp4", "hero-logo", [], "final-frame"),
     ("2024/12/AMC-Healthcare-Hospital-Final-Reduced.mp4", "hospital-film",
      ["-c:v", "libx264", "-preset", "medium", "-crf", "25", "-pix_fmt", "yuv420p",
       "-c:a", "aac", "-b:a", "96k", "-movflags", "+faststart"], "film"),
@@ -106,13 +107,15 @@ def do_videos():
         if not os.path.exists(src) and not curl(UPLOADS + suffix, src):
             print(f"  FAIL download {suffix}")
             continue
+        if kind == "final-frame":
+            # Static homepage hero: last frame -> assets/img/<name>.webp
+            hero = os.path.join(IMG_ROOT, name + ".webp")
+            subprocess.run([ff, "-y", "-hide_banner", "-loglevel", "error", "-sseof", "-0.1",
+                            "-i", src, "-frames:v", "1", "-c:v", "libwebp", "-q:v", "90", hero], check=True)
+            print(f"  ok  {os.path.relpath(hero, REPO)}")
+            continue
         mp4 = os.path.join(VIDEO_OUT, name + ".mp4")
         subprocess.run([ff, "-y", "-hide_banner", "-loglevel", "error", "-i", src] + args + [mp4], check=True)
-        if kind == "loop":
-            webm = os.path.join(VIDEO_OUT, name + ".webm")
-            subprocess.run([ff, "-y", "-hide_banner", "-loglevel", "error", "-i", src,
-                            "-vf", "scale=1920:-2", "-an", "-c:v", "libvpx-vp9",
-                            "-b:v", "0", "-crf", "34", "-row-mt", "1", "-deadline", "good", webm], check=True)
         poster = os.path.join(VIDEO_OUT, name + "-poster.webp")
         subprocess.run([ff, "-y", "-hide_banner", "-loglevel", "error", "-ss", "2", "-i", mp4,
                         "-frames:v", "1", "-c:v", "libwebp", "-q:v", "80", poster], check=True)
